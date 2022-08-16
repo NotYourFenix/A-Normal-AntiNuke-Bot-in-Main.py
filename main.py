@@ -53,6 +53,13 @@ async def on_ready():
     await client.change_presence(status=discord.Status.idle,
                                  activity=activity)
     await channel.connect()
+    
+ ####### ERROR LOG ##########
+
+@client.event
+async def on_command_error(ctx, error):
+    error = getattr(error, 'original', error)
+    await ctx.send(embed=discord.Embed(color=0x0052F9, title = "Error!" ,timestamp=ctx.message.created_at, description=f'```{error}```'))
 
 ######## gg ###########
 
@@ -221,26 +228,6 @@ async def on_guild_channel_update(before, after):
   logs = logs[0]
   await logs.user.ban(reason=f"{reason}")
 
-####### CHEAP ERRORS LOG #######
-
-@client.event
-async def on_command_error(ctx, error: commands.CommandError):
-  embed1 = discord.Embed(description=f"You Need Permission To Run This Command", color=0x0052F9)
-  embed2 = discord.Embed(description=f"You Are Missing An Arguments To Run This Command", color=0x0052F9)
-  embed3 = discord.Embed(description=f"The Selected Member could not be found", color=0x0052F9)
-  embed4 = discord.Embed(description=f"I Am Running Out of Permissions To Run This Command", color=0x0052F9)
-  embed5 = discord.Embed(description=f"Command is On CoolDown Pls Try Again Later!", color=0x0052F9)
-  if isinstance(error, commands.MissingPermissions):
-    await ctx.send(embed=embed1)
-  elif isinstance(error, commands.MissingRequiredArgument):
-     await ctx.send(embed=embed2)
-  elif isinstance(error, commands.MemberNotFound):
-    await ctx.send(embed=embed3)
-  elif isinstance(error, commands.BotMissingPermissions):
-    await ctx.send(embed=embed4)
-  elif isinstance(error, commands.CommandOnCooldown):
-    await ctx.send(embed=embed5)
-  else:
-    raise error
+####################################################
 
 client.run(token)
